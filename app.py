@@ -1,17 +1,25 @@
-# app.py
-from flask import Flask, render_template
-import os
+from flask import Flask, render_template, request
+import random
 
 app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+# Witzige Antworten
+responses = [
+    "Heute bist du ein Superschläfer mit Turbo-Fatigue – ruh dich aus oder riskiere ein Nickerchen auf der Tastatur!",
+    "Du bist ein Energiewunder – nur 12 Stunden Schlaf nötig, um die Welt zu erobern!",
+    "Achtung, Fatigue-Alarm! Heute ist Nickerchen-Oberliga – bleib liegen und lache!",
+    "Mit deinem Schlaf bist du bereit, die Mathematik der Müdigkeit zu meistern – oder einfach zu dösen."
+]
 
-@app.route('/about')
-def about():
-    return render_template('about.html')
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    prediction = ""
+    if request.method == 'POST':
+        hours = float(request.form['hours'])
+        tiredness = int(request.form['tiredness'])
+        if hours > 12 and tiredness > 5:
+            prediction = random.choice(responses)
+    return render_template('index.html', prediction=prediction)
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8080))
-    app.run(host='0.0.0.0', port=port)
+    app.run(debug=True)
